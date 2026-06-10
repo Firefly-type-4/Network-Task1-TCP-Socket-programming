@@ -20,16 +20,17 @@ def log_event(log_file, event_type, packet_type, src_addr, dst_addr, length):
     log_file.flush()
 
 def handle_client(client_sock, client_addr, log_file):
+    server_addr = client_sock.getsockname()  # 提前保存服务器端地址
     try:
         init_header = recv_exact(client_sock, 6)
         init_type, N = struct.unpack('>HI', init_header)
         if init_type != 1:
             raise ValueError(f"Expected Type=1 (Initialization), got {init_type}")
-        log_event(log_file, 'RECV', f'Initialization (Type=1) N={N}', client_addr, client_sock.getsockname(), 6)
+        log_event(log_file, 'RECV', f'Initialization (Type=1) N={N}', client_addr, server_addr, 6)
 
         agree_packet = struct.pack('>H', 2)
         client_sock.sendall(agree_packet)
-        log_event(log_file, 'SEND', 'Agree (Type=2)', client_sock.getsockname(), client_addr, 2)
+        log_event(log_file, 'SEND', 'Agree (Type=2)', server_addr, client_addr, 2)
 
         for i in range(N):
             req_header = recv_exact(client_sock, 6)
@@ -37,19 +38,19 @@ def handle_client(client_sock, client_addr, log_file):
             if req_type != 3:
                 raise ValueError(f"Expected Type=3 (ReverseRequest), got {req_type}")
             data_chunk = recv_exact(client_sock, req_length)
-            log_event(log_file, 'RECV', f'ReverseRequest (Type=3) Block {i+1}', client_addr, client_sock.getsockname(), 6 + req_length)
+            log_event(log_file, 'RECV', f'ReverseRequest (Type=3) Block {i+1}', client_addr, server_addr, 6 + req_length)
 
             reversed_chunk = data_chunk[::-1]
             ans_header = struct.pack('>HI', 4, len(reversed_chunk))
             ans_packet = ans_header + reversed_chunk
             client_sock.sendall(ans_packet)
-            log_event(log_file, 'SEND', f'ReverseAnswer (Type=4) Block {i+1}', client_sock.getsockname(), client_addr, len(ans_packet))
+            log_event(log_file, 'SEND', f'ReverseAnswer (Type=4) Block {i+1}', server_addr, client_addr, len(ans_packet))
 
     except Exception as e:
-        log_event(log_file, 'ERROR', f'Client error: {str(e)}', client_addr, client_sock.getsockname(), 0)
+        log_event(log_file, 'ERROR', f'Client error: {str(e)}', client_addr, server_addr, 0)
     finally:
         client_sock.close()
-        log_event(log_file, 'DISCONNECT', 'Client', client_addr, client_sock.getsockname(), 0)
+        log_event(log_file, 'DISCONNECT', 'Client', client_addr, server_addr, 0)
 
 def main():
     if len(sys.argv) != 2:

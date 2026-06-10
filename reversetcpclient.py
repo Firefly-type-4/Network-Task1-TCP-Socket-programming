@@ -57,26 +57,28 @@ def main():
 
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_addr = (server_ip, server_port)
+    local_addr = None  # 新增：保存本地套接字地址
 
     try:
         sock.connect(server_addr)
+        local_addr = sock.getsockname()  # 连接成功后立即保存本地地址
     except ConnectionRefusedError:
         print(f"Error: Could not connect to server at {server_ip}:{server_port}")
         sys.exit(1)
 
     log_file = open('client_run_log.txt', 'w', encoding='utf-8')
-    log_event(log_file, 'CONNECT', 'Client', sock.getsockname(), server_addr, 0)
+    log_event(log_file, 'CONNECT', 'Client', local_addr, server_addr, 0)
 
     try:
         init_packet = struct.pack('>HI', 1, N)
         sock.sendall(init_packet)
-        log_event(log_file, 'SEND', 'Initialization (Type=1)', sock.getsockname(), server_addr, len(init_packet))
+        log_event(log_file, 'SEND', 'Initialization (Type=1)', local_addr, server_addr, len(init_packet))
 
         agree_data = recv_exact(sock, 2)
         agree_type, = struct.unpack('>H', agree_data)
         if agree_type != 2:
             raise ValueError(f"Expected Type=2 (Agree), got {agree_type}")
-        log_event(log_file, 'RECV', 'Agree (Type=2)', server_addr, sock.getsockname(), len(agree_data))
+        log_event(log_file, 'RECV', 'Agree (Type=2)', server_addr, local_addr, len(agree_data))
 
         reversed_data_list = []
         for i in range(N):
@@ -88,14 +90,14 @@ def main():
             req_header = struct.pack('>HI', 3, chunk_len)
             req_packet = req_header + data_chunk
             sock.sendall(req_packet)
-            log_event(log_file, 'SEND', f'ReverseRequest (Type=3) Block {i+1}', sock.getsockname(), server_addr, len(req_packet))
+            log_event(log_file, 'SEND', f'ReverseRequest (Type=3) Block {i+1}', local_addr, server_addr, len(req_packet))
 
             ans_header = recv_exact(sock, 6)
             ans_type, ans_length = struct.unpack('>HI', ans_header)
             if ans_type != 4:
                 raise ValueError(f"Expected Type=4 (ReverseAnswer), got {ans_type}")
             reversed_chunk = recv_exact(sock, ans_length)
-            log_event(log_file, 'RECV', f'ReverseAnswer (Type=4) Block {i+1}', server_addr, sock.getsockname(), 6 + ans_length)
+            log_event(log_file, 'RECV', f'ReverseAnswer (Type=4) Block {i+1}', server_addr, local_addr, 6 + ans_length)
 
             print(f"{i+1}: {reversed_chunk.decode('ascii')}")
             reversed_data_list.append(reversed_chunk)
@@ -106,11 +108,12 @@ def main():
         print(f"\nSuccess! Full reversed file saved to {output_file}")
 
     except Exception as e:
-        log_event(log_file, 'ERROR', f'Client error: {str(e)}', sock.getsockname(), server_addr, 0)
+        log_event(log_file, 'ERROR', f'Client error: {str(e)}', local_addr, server_addr, 0)
         print(f"Error: {str(e)}")
     finally:
         sock.close()
-        log_event(log_file, 'DISCONNECT', 'Client', sock.getsockname(), server_addr, 0)
+        # 现在使用提前保存的local_addr，而不是sock.getsockname()
+        log_event(log_file, 'DISCONNECT', 'Client', local_addr, server_addr, 0)
         log_file.close()
 
 if __name__ == "__main__":
