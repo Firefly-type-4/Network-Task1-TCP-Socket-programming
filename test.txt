@@ -1,1 +1,1 @@
-Hello World! This is a test file for TCP socket programming. It contains only printable ASCII characters. The file will be split into random chunks and reversed by the server.
+Hello World! This is a test file for TCP socket programming.  
