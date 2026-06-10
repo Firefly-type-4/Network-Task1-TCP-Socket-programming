@@ -90,4 +90,6 @@ def main():
 if __name__ == "__main__":
     main()
 
+
+#  wireshark filter: tcp.port == 8888 and tcp.len > 0
 #  python reversetcpserver.py 8888

@@ -119,5 +119,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-    
+    #  wireshark filter: tcp.port == 8888 and tcp.len > 0
     #  python reversetcpclient.py 127.0.0.1 8888 test.txt reversed_test.txt 50 100 42
