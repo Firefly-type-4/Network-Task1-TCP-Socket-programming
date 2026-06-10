@@ -70,7 +70,7 @@ def main():
 
     server_sock.listen(5)
     log_file = open('server_run_log.txt', 'w', encoding='utf-8')
-    log_event(log_file, 'START', 'Server', server_addr, ('', 0), 0)
+    log_event(log_file, 'START', 'Server', server_addr, ('-', 0), 0)
     print(f"Server listening on 0.0.0.0:{server_port}")
 
     try:
