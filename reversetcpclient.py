@@ -119,4 +119,5 @@ def main():
 if __name__ == "__main__":
     main()
 
-    #  python reversetcpserver.py 8888
+    
+    #  python reversetcpclient.py 127.0.0.1 8888 test.txt reversed_test.txt 50 100 42
