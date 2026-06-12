@@ -1,7 +1,7 @@
-2026-06-10 12:00:02.093 [START] Server from 0.0.0.0:8888 to -:0, length=0 bytes
-2026-06-10 12:00:20.828 [ACCEPT] New client from 127.0.0.1:64835 to 127.0.0.1:8888, length=0 bytes
-2026-06-10 12:00:20.833 [RECV] Initialization (Type=1) N=1 from 127.0.0.1:64835 to 127.0.0.1:8888, length=6 bytes
-2026-06-10 12:00:20.834 [SEND] Agree (Type=2) from 127.0.0.1:8888 to 127.0.0.1:64835, length=2 bytes
-2026-06-10 12:00:20.834 [RECV] ReverseRequest (Type=3) Block 1 from 127.0.0.1:64835 to 127.0.0.1:8888, length=68 bytes
-2026-06-10 12:00:20.834 [SEND] ReverseAnswer (Type=4) Block 1 from 127.0.0.1:8888 to 127.0.0.1:64835, length=68 bytes
-2026-06-10 12:00:20.834 [DISCONNECT] Client from 127.0.0.1:64835 to 127.0.0.1:8888, length=0 bytes
+2026-06-12 14:35:39.190 [START] Server from 0.0.0.0:8888 to -:0, length=0 bytes
+2026-06-12 14:36:01.255 [ACCEPT] New client from 127.0.0.1:56094 to 127.0.0.1:8888, length=0 bytes
+2026-06-12 14:36:01.258 [RECV] Initialization (Type=1) N=1 from 127.0.0.1:56094 to 127.0.0.1:8888, length=6 bytes
+2026-06-12 14:36:01.258 [SEND] Agree (Type=2) from 127.0.0.1:8888 to 127.0.0.1:56094, length=2 bytes
+2026-06-12 14:36:01.258 [RECV] ReverseRequest (Type=3) Block 1 from 127.0.0.1:56094 to 127.0.0.1:8888, length=68 bytes
+2026-06-12 14:36:01.259 [SEND] ReverseAnswer (Type=4) Block 1 from 127.0.0.1:8888 to 127.0.0.1:56094, length=68 bytes
+2026-06-12 14:36:01.259 [DISCONNECT] Client from 127.0.0.1:56094 to 127.0.0.1:8888, length=0 bytes
